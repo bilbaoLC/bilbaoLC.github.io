@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Old-School Homepage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <table width="760" align="center" cellpadding="12" cellspacing="0" border="1">
+    <tr>
+      <td>
+        <center>
+          <h1>Welcome to my homepage</h1>
+          <marquee behavior="scroll" direction="left">✨ Under construction ✨</marquee>
+          <p><img src="https://via.placeholder.com/468x60?text=Banner" alt="banner"></p>
+          <p>
+            <a href="#about">About</a> |
+            <a href="#links">Links</a> |
+            <a href="#guestbook">Guestbook</a>
+          </p>
+          <hr>
+        </center>
+
+        <h2 id="about">About</h2>
+        <p>This is a proudly old-school website: tables, borders, and vibes.</p>
+
+        <h2 id="links">Links</h2>
+        <ul>
+          <li><a href="https://github.com/">GitHub</a></li>
+          <li><a href="https://www.w3.org/Style/CSS/">CSS</a></li>
+        </ul>
+
+        <h2 id="guestbook">Guestbook</h2>
+        <p>(Static sites can’t store entries, but you can link to a Google Form.)</p>
+
+        <hr>
+        <center>
+          <small>© <span id="y"></span> Me • Best viewed in Netscape (just kidding)</small>
+        </center>
+      </td>
+    </tr>
+  </table>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
