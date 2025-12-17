@@ -1,0 +1,18 @@
+body {
+  background: #000033;
+  color: #00ff66;
+  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+  margin: 20px;
+}
+
+a { color: #66ccff; }
+a:visited { color: #ff66ff; }
+
+h1, h2 { text-shadow: 1px 1px 0 #000; }
+
+table {
+  background: #001144;
+  border-color: #00ff66;
+}
+
+hr { border: 0; border-top: 1px dashed #00ff66; }
