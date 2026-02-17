@@ -1,10 +1,10 @@
 :root {
-  --bg: #000033;
-  --panel: #001144;
-  --text: #00ff66;
-  --link: #66ccff;
-  --visited: #ff66ff;
-  --border: #00ff66;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --text: #111111;
+  --link: #0645ad;
+  --visited: #551a8b;
+  --border: #cfcfcf;
 }
 
 *,
@@ -23,7 +23,7 @@ body {
 }
 
 .page {
-  max-width: 760px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 12px;
   background: var(--panel);
@@ -54,7 +54,7 @@ h1 {
 }
 
 h2 {
-  text-shadow: 1px 1px 0 #000;
+  text-shadow: none;
 }
 
 a {
@@ -82,7 +82,7 @@ a:focus-visible {
 .nav-list li:not(:last-child)::after {
   content: "|";
   margin-left: 10px;
-  color: var(--text);
+  color: #666;
 }
 
 .pub-years {
