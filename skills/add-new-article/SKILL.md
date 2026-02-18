@@ -5,7 +5,7 @@ description: Add a new publication reference to the project publication list in 
 
 # Add New Article
 
-Update `publications.html` with a new publication entry while preserving existing structure and style.
+Update `publications.html` with a new publication entry while preserving existing structure and style, and keep the year links in `index.html` synchronized.
 
 ## Follow This Workflow
 
@@ -16,15 +16,17 @@ Update `publications.html` with a new publication entry while preserving existin
    2. Create a new year block:
       - `<h2 id="YEAR">YEAR</h2>`
       - `<ul> ...new <li> entries... </ul>`
-      - Make sure the year is added in `index.html` if it is a new year.
-4. Insert the new article as a `<li>` entry in the correct year list, matching local punctuation, italics, bold tags, and link attributes.
-5. Use links with `target="_blank"` and `rel="noopener noreferrer"` for external URLs.
-6. Keep author emphasis exactly as requested by the user (for example, names of current group members (listed in `index.html`) in `<b>...</b>`).
-7. If citation metadata is incomplete, add a minimal safe entry (e.g., arXiv id + year + link) and ask for missing fields in the final response.
-8. Verify with a quick text search that:
+4. Open `index.html` and verify the Publications year links include the same year set as `publications.html`.
+5. If a year is missing in `index.html`, insert `<a href="publications.html#YEAR">YEAR</a>` in descending order.
+6. Insert the new article as a `<li>` entry in the correct year list, matching local punctuation, italics, bold tags, and link attributes.
+7. Use links with `target="_blank"` and `rel="noopener noreferrer"` for external URLs.
+8. Keep author emphasis exactly as requested by the user (for example, names of current group members (listed in `index.html`) in `<b>...</b>`).
+9. If citation metadata is incomplete, add a minimal safe entry (e.g., arXiv id + year + link) and ask for missing fields in the final response.
+10. Verify with a quick text search that:
    1. The year anchor exists.
    2. The new URL appears once in the intended section.
-   3. The HTML around the insertion remains balanced.
+   3. `index.html` contains a matching year link for that year.
+   4. The HTML around the insertion remains balanced.
 
 ## Formatting Rules
 
@@ -40,4 +42,3 @@ Update `publications.html` with a new publication entry while preserving existin
 - Report the file path updated.
 - Report where the new section or item was inserted.
 - Mention if metadata is missing and what fields are needed to upgrade the citation.
-- Say: "ADDED DUDE" if the new entry was added successfully.
