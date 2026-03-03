@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loader cifrado local</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #0f172a;
+    }
+    .panel {
+      width: min(92vw, 520px);
+      background: #ffffffee;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      padding: 20px;
+    }
+    h1 { margin: 0 0 10px; font-size: 1.3rem; }
+    p { margin: 0 0 14px; color: #334155; }
+    input, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #94a3b8;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 10px;
+      background: #0f766e;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #115e59; }
+    .error { margin-top: 10px; color: #b91c1c; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <main class="panel" id="panel">
+    <h1>Contenido cifrado</h1>
+    <p>Introduce la contraseña para descifrar <code>private.enc</code>.</p>
+    <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" />
+    <button id="unlock">Desbloquear</button>
+    <div class="error" id="error"></div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('unlock');
+    const passInput = document.getElementById('password');
+    const errorEl = document.getElementById('error');
+
+    function base64ToBytes(base64) {
+      const bin = atob(base64.replace(/\s+/g, ''));
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i += 1) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+
+    async function decryptOpenSslPbkd2Aes256Cbc(encryptedBase64, password) {
+      const allBytes = base64ToBytes(encryptedBase64);
+      if (allBytes.length < 16) {
+        throw new Error('Archivo cifrado demasiado corto.');
+      }
+
+      const header = new TextDecoder().decode(allBytes.slice(0, 8));
+      if (header !== 'Salted__') {
+        throw new Error('Formato no válido: falta cabecera OpenSSL.');
+      }
+
+      const salt = allBytes.slice(8, 16);
+      const ciphertext = allBytes.slice(16);
+      const pwBytes = new TextEncoder().encode(password);
+
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        pwBytes,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+      );
+
+      const derivedBits = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt, iterations: 10000, hash: 'SHA-256' },
+        keyMaterial,
+        384
+      );
+
+      const derived = new Uint8Array(derivedBits);
+      const keyBytes = derived.slice(0, 32);
+      const iv = derived.slice(32, 48);
+
+      const aesKey = await crypto.subtle.importKey(
+        'raw',
+        keyBytes,
+        { name: 'AES-CBC' },
+        false,
+        ['decrypt']
+      );
+
+      const plainBuffer = await crypto.subtle.decrypt(
+        { name: 'AES-CBC', iv },
+        aesKey,
+        ciphertext
+      );
+
+      return new TextDecoder().decode(plainBuffer);
+    }
+
+    async function unlock() {
+      errorEl.textContent = '';
+      const password = passInput.value;
+      if (!password) {
+        errorEl.textContent = 'Introduce una contraseña.';
+        return;
+      }
+
+      try {
+        const response = await fetch('private.enc', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('No se pudo leer private.enc');
+        }
+
+        const encryptedBase64 = (await response.text()).trim();
+        const decrypted = await decryptOpenSslPbkd2Aes256Cbc(encryptedBase64, password);
+
+        if (!decrypted) {
+          throw new Error('Contraseña incorrecta o archivo inválido.');
+        }
+
+        document.open();
+        document.write(decrypted);
+        document.close();
+      } catch (err) {
+        errorEl.textContent = err.message;
+      }
+    }
+
+    btn.addEventListener('click', unlock);
+    passInput.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') unlock();
+    });
+  </script>
+</body>
+</html>
